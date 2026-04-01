@@ -19,7 +19,7 @@
     "@langchain/mongodb": "^1.1.0",
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",
-    "express": "^5.2.1",
+    "express": "^4.19.2",
     "imagekit": "^6.0.0",
     "langchain": "^1.2.39",
     "mongodb": "^7.1.1",
