@@ -12,6 +12,8 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { writeFileSync, unlinkSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
+import dotenv from "dotenv"; 
+dotenv.config(); 
 
 const app = express();
 app.use(cors());
@@ -53,11 +55,9 @@ app.post("/upload/pdf", upload.single("pdf"), async (req, res) => {
     const pdfUrl = ikResponse.url;
     console.log("PDF uploaded to ImageKit:", pdfUrl);
 
-    // 2. Write buffer to temp file for PDFLoader
     const tempPath = join(tmpdir(), fileName);
     writeFileSync(tempPath, fileBuffer);
 
-   
     const loader = new PDFLoader(tempPath);
     const docs = await loader.load();
     unlinkSync(tempPath);
@@ -112,17 +112,14 @@ app.post("/chat", async (req, res) => {
     const retriever = vectorStore.asRetriever({ k: 4 });
     const relevantDocs = await retriever.invoke(question);
 
-    
     const context = relevantDocs.map((doc) => doc.pageContent).join("\n\n");
 
-   
     const llm = new ChatGroq({
       apiKey: process.env.GROQ_API_KEY,
       model: "llama-3.1-8b-instant",
       temperature: 0,
     });
 
-    
     const prompt = ChatPromptTemplate.fromTemplate(`
       You are a helpful assistant that answers questions based on PDF content.
       Use ONLY the context below. If unsure, say "I don't have enough information."
